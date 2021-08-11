@@ -1,0 +1,34 @@
+[
+    {
+            "id": 1,
+            "category": "ARTICLE CATEGORY",
+            "title": "Strive",
+            "cover":"https://bit.ly/37wxEXk",
+            "readTime": {
+              "value": 2,
+              "unit": "minute"
+            },
+            "author": {
+              "name": "Diego Bo",
+              "avatar":"https://bit.ly/37wxEXk"
+            },
+            "content": "HTML"
+            
+          },
+          {
+            "id": 2,
+            "category": "ARTICLE CATEGORY",
+            "title": "Coding",
+            "cover":"https://bit.ly/37wxEXk",
+            "readTime": {
+              "value": 2,
+              "unit": "minute"
+            },
+            "author": {
+              "name": "Diego Bo",
+              "avatar":"https://bit.ly/37wxEXk"
+            },
+            "content": "HTML"
+            
+          }
+    ]
