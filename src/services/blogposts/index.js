@@ -56,7 +56,7 @@ blogPostsRouter.get("/:postId", (req, res, next) => {
     next(error);
   }
 });
-blogPostsRouter.post("/", (req, res, next) => {
+blogPostsRouter.post("/", postValidation, (req, res, next) => {
   try {
     const posts = getPosts();
     const errorsList = validationResult(req);
