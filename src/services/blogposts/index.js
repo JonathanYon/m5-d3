@@ -20,7 +20,7 @@ const getPosts = () => {
 };
 
 const writePost = (content) =>
-  fs.readFileSync(jsonPath, JSON.stringify(content));
+  fs.writeFileSync(jsonPath, JSON.stringify(content));
 
 blogPostsRouter.get("/", (req, res, next) => {
   try {
@@ -56,6 +56,7 @@ blogPostsRouter.get("/:postId", (req, res, next) => {
     next(error);
   }
 });
+
 blogPostsRouter.post("/", postValidation, (req, res, next) => {
   try {
     const posts = getPosts();
@@ -66,7 +67,7 @@ blogPostsRouter.post("/", postValidation, (req, res, next) => {
       const newPost = { ...req.body, id: uniqid(), createdAt: new Date() };
       posts.push(newPost);
       writePost(posts);
-      res.status(201).send({ id: newPost.id });
+      res.status(201).send(posts);
     }
   } catch (error) {
     next(error);

@@ -15,10 +15,16 @@ server.use(express.json());
 
 server.use("/blogposts", blogPostsRouter);
 
-server.use(notFoundHandler);
-server.use(badRequestHandler);
-server.use(forbidenHandler);
-server.use(genericErrorHandler);
+// server.use(notFoundHandler);
+// server.use(badRequestHandler);
+// server.use(forbidenHandler);
+// server.use(genericErrorHandler);
+
+server.use((req, res) => {
+  if (!req.route) {
+    res.status(404).send("ROUTE NOT FOUND");
+  }
+});
 
 console.table(listEndpoints(server));
 server.listen(port, () => {
