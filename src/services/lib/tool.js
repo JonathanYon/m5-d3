@@ -1,8 +1,8 @@
-import fs, { readJSON, writeFile, writeJSON } from "fs-extra";
+import fs from "fs-extra";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
 
-const { readJSON, writeJSON } = fs;
+const { readJSON, writeJSON, writeFile } = fs;
 
 const fileJasonPath = join(
   dirname(fileURLToPath(import.meta.url)),
@@ -16,4 +16,4 @@ const authorsJasonPath = join(
 export const getPosts = () => readJSON(authorsJasonPath);
 export const writePosts = (content) => writeJSON(authorsJasonPath, content);
 export const saveFile = (filename, content) =>
-  writeFile(join(authorsJasonPath, filename), content);
+  writeFile(join(fileJasonPath, filename), content);

@@ -6,14 +6,20 @@ import { notFoundHandler } from "./errorHandler.js";
 import { badRequestHandler } from "./errorHandler.js";
 import { forbidenHandler } from "./errorHandler.js";
 import { genericErrorHandler } from "./errorHandler.js";
+import filesRouter from "./services/file/index.js";
+import { join } from "path";
 
 const server = express();
 const port = 3003;
 
+const publicFolderPath = join(process.cwd(), "public");
+
+server.use(express.static(publicFolderPath));
 server.use(cors());
 server.use(express.json());
 
 server.use("/blogposts", blogPostsRouter);
+server.use("/files", filesRouter);
 
 server.use(notFoundHandler);
 server.use(badRequestHandler);
