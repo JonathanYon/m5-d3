@@ -2,7 +2,7 @@ import express from "express";
 // import { fileURLToPath } from "url";
 // import { dirname, join } from "path";
 // import fs from "fs";
-import { getPosts, writePosts } from "../lib/tool.js";
+import { getPosts, writePosts, fileParse, uploadFile } from "../lib/tool.js";
 
 import uniqid from "uniqid";
 import createHttpError from "http-errors";
@@ -26,7 +26,6 @@ const blogPostsRouter = express.Router();
 
 blogPostsRouter.get("/", async (req, res, next) => {
   try {
-    console.log(req.query);
     const posts = await getPosts();
     if (req.query && req.query.title) {
       const filterposts = posts.filter(
@@ -68,7 +67,7 @@ blogPostsRouter.post("/", postValidation, async (req, res, next) => {
     } else {
       const newPost = { ...req.body, id: uniqid(), createdAt: new Date() };
       posts.push(newPost);
-      await writePost(posts);
+      await writePosts(posts);
       res.status(201).send(posts);
     }
   } catch (error) {
@@ -78,11 +77,22 @@ blogPostsRouter.post("/", postValidation, async (req, res, next) => {
 blogPostsRouter.put("/:postId", async (req, res, next) => {
   try {
     const posts = await getPosts();
-    const remainPosts = posts.filter((post) => post.id !== req.params.postId);
-    const updatedPost = { ...req.body, id: req.params.postId };
-    remainPosts.push(updatedPost);
-    await writePost(remainPosts);
-    res.send(updatedPost);
+    const postIndex = posts.findIndex((post) => post.id === req.params.postId);
+    if (postIndex == -1) {
+      next(
+        createHttpError(404, `the post with ${req.params.postId} is not found!`)
+      );
+    } else {
+      const originalPost = posts[postIndex];
+      const changedPost = {
+        ...originalPost,
+        ...req.body,
+        updatedAt: new Date().toISOString,
+      };
+      posts[postIndex] = changedPost;
+      await writePosts(posts);
+      res.send(changedPost);
+    }
   } catch (error) {
     next(error);
   }
@@ -91,11 +101,72 @@ blogPostsRouter.delete("/:postId", async (req, res, next) => {
   try {
     const posts = await getPosts();
     const allPost = posts.filter((p) => p.id !== req.params.postId);
-    await writePost(allPost);
+    await writePosts(allPost);
     res.status(204).send();
   } catch (error) {
     next(error);
   }
 });
+
+//post img
+blogPostsRouter.post(
+  "/:postId/cover",
+  fileParse.single("cover"),
+  uploadFile,
+  postValidation,
+  async (req, res, next) => {
+    try {
+      const posts = await getPosts();
+      const postIndex = posts.findIndex(
+        (post) => post.id === req.params.postId
+      );
+      if (postIndex == -1) {
+        res.status(404).send({ meesage: "BlogPost not Found!" });
+      } else {
+        const originalPost = posts[postIndex];
+        const changedPost = { ...originalPost, cover: req.file, ...req.body };
+        posts[postIndex] = changedPost;
+        writePosts(posts);
+        res.status(200).send(changedPost);
+      }
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
+  }
+);
+
+//post img
+blogPostsRouter.post(
+  "/:postId/avatar",
+  fileParse.single("avatar"),
+  uploadFile,
+  postValidation,
+  async (req, res, next) => {
+    try {
+      const posts = await getPosts();
+      const postIndex = posts.findIndex(
+        (post) => post.id === req.params.postId
+      );
+      const post = posts.find((post) => post.id === req.params.postId);
+      if (postIndex == -1) {
+        res.status(404).send({ meesage: "BlogPost not Found!" });
+      } else {
+        const originalPost = posts[postIndex];
+        const changedPost = {
+          ...originalPost,
+          author: { name: post.author.name, avatar: req.file }, //i dont know how to make avatar not to overwrite name
+          ...req.body,
+        };
+        posts[postIndex] = changedPost;
+        writePosts(posts);
+        res.status(200).send(changedPost);
+      }
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
+  }
+);
 
 export default blogPostsRouter;
