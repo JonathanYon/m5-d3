@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon -e js -r dotenv/config ./src/app.js"
+    "dev": "nodemon -e js -r dotenv/config ./src/app.js",
+    "start": "node .src/app.js"
   },
   "repository": {
     "type": "git",
