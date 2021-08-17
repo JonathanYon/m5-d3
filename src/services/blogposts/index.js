@@ -108,7 +108,7 @@ blogPostsRouter.delete("/:postId", async (req, res, next) => {
   }
 });
 
-//post img
+//post img cover
 blogPostsRouter.post(
   "/:postId/cover",
   fileParse.single("cover"),
@@ -136,7 +136,7 @@ blogPostsRouter.post(
   }
 );
 
-//post img
+//post img avatar
 blogPostsRouter.post(
   "/:postId/avatar",
   fileParse.single("avatar"),
@@ -168,5 +168,23 @@ blogPostsRouter.post(
     }
   }
 );
+// post comment (not finished yet!)
+
+blogPostsRouter.post("/", postValidation, async (req, res, next) => {
+  try {
+    const posts = await getPosts();
+    const errorsList = validationResult(req);
+    if (!errorsList.isEmpty()) {
+      next(createHttpError(400, { errorsList }));
+    } else {
+      const newPost = { ...req.body, id: uniqid(), createdAt: new Date() };
+      posts.push(newPost);
+      await writePosts(posts);
+      res.status(201).send(posts);
+    }
+  } catch (error) {
+    next(error);
+  }
+});
 
 export default blogPostsRouter;

@@ -10,12 +10,27 @@ import filesRouter from "./services/file/index.js";
 import { join } from "path";
 
 const server = express();
-const port = 3003;
+const port = process.env.PORT;
 
 const publicFolderPath = join(process.cwd(), "public");
 
+const links = [process.env.FE_DEV_URL, process.env.FE_PRO_URL];
+// const links = ["http://localhost:3000", "http://myapp.com"];
+const corsOpt = {
+  origin: function (origin, next) {
+    console.log("origin:", origin);
+    console.log(port);
+
+    if (!origin || links.indexOf(origin) !== -1) {
+      next(null, true);
+    } else {
+      next(new Error(`origin  ${origin} NOT found!`));
+    }
+  },
+};
+
 server.use(express.static(publicFolderPath));
-server.use(cors());
+server.use(cors(corsOpt));
 server.use(express.json());
 
 server.use("/blogposts", blogPostsRouter);
