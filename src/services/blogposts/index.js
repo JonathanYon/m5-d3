@@ -115,6 +115,7 @@ blogPostsRouter.post(
   postValidation,
   async (req, res, next) => {
     try {
+      console.log(req.file);
       const posts = await getPosts();
       const postIndex = posts.findIndex(
         (post) => post.id === req.params.postId
