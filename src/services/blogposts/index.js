@@ -112,7 +112,6 @@ blogPostsRouter.delete("/:postId", async (req, res, next) => {
 blogPostsRouter.post(
   "/:postId/cover",
   fileParse.single("cover"),
-  uploadFile,
   postValidation,
   async (req, res, next) => {
     try {
@@ -124,7 +123,11 @@ blogPostsRouter.post(
         res.status(404).send({ meesage: "BlogPost not Found!" });
       } else {
         const originalPost = posts[postIndex];
-        const changedPost = { ...originalPost, cover: req.file, ...req.body };
+        const changedPost = {
+          ...originalPost,
+          cover: req.file.path,
+          ...req.body,
+        };
         posts[postIndex] = changedPost;
         writePosts(posts);
         res.status(200).send(changedPost);
@@ -140,10 +143,11 @@ blogPostsRouter.post(
 blogPostsRouter.post(
   "/:postId/avatar",
   fileParse.single("avatar"),
-  uploadFile,
+  // uploadFile,
   postValidation,
   async (req, res, next) => {
     try {
+      console.log(req.file);
       const posts = await getPosts();
       const postIndex = posts.findIndex(
         (post) => post.id === req.params.postId
@@ -155,7 +159,7 @@ blogPostsRouter.post(
         const originalPost = posts[postIndex];
         const changedPost = {
           ...originalPost,
-          author: { name: post.author.name, avatar: req.file }, //i dont know how to make avatar not to overwrite name
+          author: { name: post.author.name, avatar: req.file.path }, //i dont know how to make avatar not to overwrite name
           ...req.body,
         };
         posts[postIndex] = changedPost;
