@@ -149,24 +149,25 @@ blogPostsRouter.post(
   async (req, res, next) => {
     try {
       console.log(req.file);
-      const posts = await getPosts();
-      const postIndex = posts.findIndex(
-        (post) => post.id === req.params.postId
-      );
-      const post = posts.find((post) => post.id === req.params.postId);
-      if (postIndex == -1) {
-        res.status(404).send({ meesage: "BlogPost not Found!" });
-      } else {
-        const originalPost = posts[postIndex];
-        const changedPost = {
-          ...originalPost,
-          author: { name: post.author.name, avatar: req.file.path }, //i dont know how to make avatar not to overwrite name
-          ...req.body,
-        };
-        posts[postIndex] = changedPost;
-        writePosts(posts);
-        res.status(200).send(changedPost);
-      }
+      res.send(req.file);
+      //   const posts = await getPosts();
+      //   const postIndex = posts.findIndex(
+      //     (post) => post.id === req.params.postId
+      //   );
+      //   const post = posts.find((post) => post.id === req.params.postId);
+      //   if (postIndex == -1) {
+      //     res.status(404).send({ meesage: "BlogPost not Found!" });
+      //   } else {
+      //     const originalPost = posts[postIndex];
+      //     const changedPost = {
+      //       ...originalPost,
+      //       author: { name: post.author.name, avatar: req.file.path }, //i dont know how to make avatar not to overwrite name
+      //       ...req.body,
+      //     };
+      //     posts[postIndex] = changedPost;
+      //     writePosts(posts);
+      //     res.status(200).send(changedPost);
+      //   }
     } catch (error) {
       console.log(error);
       next(error);
