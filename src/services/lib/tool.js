@@ -2,6 +2,15 @@ import fs from "fs-extra";
 import { fileURLToPath } from "url";
 import { extname, dirname, join } from "path";
 import multer from "multer";
+import { v2 as cloudinary } from "cloudinary";
+import { CloudinaryStorage } from "multer-storage-cloudinary";
+
+const cloudinaryStorage = new CloudinaryStorage({
+  cloudinary, //coming from env
+  params: {
+    folder: "blog Photos",
+  },
+});
 
 const { readJSON, writeJSON, writeFile } = fs;
 
@@ -14,7 +23,7 @@ const authorsJasonPath = join(
   "../data/blogposts.json"
 );
 
-export const fileParse = multer();
+export const fileParse = multer({ storage: cloudinaryStorage });
 export const uploadFile = (req, res, next) => {
   try {
     const { originalname, buffer } = req.file;
