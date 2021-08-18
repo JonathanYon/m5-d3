@@ -16,7 +16,12 @@ export const getPDFStream = (data) => {
   //   const fs = require('fs');
 
   const docDefinition = {
-    content: [`${data.category}`],
+    content: [
+      {
+        image: `${data.cover}`,
+      },
+      `${data.category} is the the category`,
+    ],
   };
   console.log(docDefinition);
   const options = {};

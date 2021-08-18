@@ -182,7 +182,7 @@ blogPostsRouter.post(
   }
 );
 
-blogPostsRouter.get("/:/id/PDFDownload", async (req, res, next) => {
+blogPostsRouter.get("/:id/PDFDownload", async (req, res, next) => {
   try {
     const posts = await getPosts();
     const post = posts.find((p) => p.id === req.params.postId);
