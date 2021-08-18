@@ -22,10 +22,10 @@ export const getPDFStream = (data) => {
         // {
         //   image: `${data.avatar}`,
         // },
-        `${data.category} is the the category`,
+        `is the the category`,
       ],
     };
-    console.log(docDefinition);
+    console.log("docDefinition", docDefinition);
     const options = {};
 
     const pdfReadStream = printer.createPdfKitDocument(docDefinition, options);
