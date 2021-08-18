@@ -12,7 +12,7 @@ const cloudinaryStorage = new CloudinaryStorage({
   },
 });
 
-const { readJSON, writeJSON, writeFile } = fs;
+const { readJSON, writeJSON, writeFile, createReadStream } = fs;
 
 const fileJasonPath = join(
   dirname(fileURLToPath(import.meta.url)),
@@ -46,3 +46,4 @@ export const getPosts = () => readJSON(authorsJasonPath);
 export const writePosts = (content) => writeJSON(authorsJasonPath, content);
 export const saveFile = (filename, content) =>
   writeFile(join(fileJasonPath, filename), content);
+export const getPostStream = () => createReadStream(authorsJasonPath);

@@ -2,12 +2,19 @@ import express from "express";
 // import { fileURLToPath } from "url";
 // import { dirname, join } from "path";
 // import fs from "fs";
-import { getPosts, writePosts, fileParse, uploadFile } from "../lib/tool.js";
-
+import {
+  getPosts,
+  writePosts,
+  fileParse,
+  uploadFile,
+  getPostStream,
+} from "../lib/tool.js";
+import { getPDFStream } from "../lib/pdf.js";
 import uniqid from "uniqid";
 import createHttpError from "http-errors";
 import { validationResult } from "express-validator";
 import { postValidation } from "./validation.js";
+import { pipeline } from "stream";
 
 const blogPostsRouter = express.Router();
 
@@ -149,31 +156,60 @@ blogPostsRouter.post(
   async (req, res, next) => {
     try {
       console.log(req.file);
-      res.send(req.file);
-      //   const posts = await getPosts();
-      //   const postIndex = posts.findIndex(
-      //     (post) => post.id === req.params.postId
-      //   );
-      //   const post = posts.find((post) => post.id === req.params.postId);
-      //   if (postIndex == -1) {
-      //     res.status(404).send({ meesage: "BlogPost not Found!" });
-      //   } else {
-      //     const originalPost = posts[postIndex];
-      //     const changedPost = {
-      //       ...originalPost,
-      //       author: { name: post.author.name, avatar: req.file.path }, //i dont know how to make avatar not to overwrite name
-      //       ...req.body,
-      //     };
-      //     posts[postIndex] = changedPost;
-      //     writePosts(posts);
-      //     res.status(200).send(changedPost);
-      //   }
+      // res.send(req.file);
+      const posts = await getPosts();
+      const postIndex = posts.findIndex(
+        (post) => post.id === req.params.postId
+      );
+      const post = posts.find((post) => post.id === req.params.postId);
+      if (postIndex == -1) {
+        res.status(404).send({ meesage: "BlogPost not Found!" });
+      } else {
+        const originalPost = posts[postIndex];
+        const changedPost = {
+          ...originalPost,
+          author: { name: post.author.name, avatar: req.file.path },
+          ...req.body,
+        };
+        posts[postIndex] = changedPost;
+        writePosts(posts);
+        res.status(200).send(changedPost);
+      }
     } catch (error) {
       console.log(error);
       next(error);
     }
   }
 );
+
+blogPostsRouter.get("/PDFDownload", async (req, res, next) => {
+  try {
+    // const posts = await getPosts();
+    // const post = posts.find((p) => p.id === req.params.postId);
+    res.setHeader("Content-disposition", `attachment; filename=blogposts.pdf`);
+    const source = getPDFStream(); //{ cover: post.cover, contents: post.content }
+    const destination = res;
+    pipeline(source, destination, (err) => {
+      if (err) next(err);
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+blogPostsRouter.get("/JSONDownload", async (req, res, next) => {
+  try {
+    res.setHeader("Content-disposition", `attachment; filename=blogposts.json`);
+    const source = getPostStream();
+    const destination = res;
+    pipeline(source, destination, (err) => {
+      if (err) next(err);
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
 // post comment (not finished yet!)
 
 blogPostsRouter.post("/", postValidation, async (req, res, next) => {

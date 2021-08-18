@@ -18,11 +18,10 @@ const links = [process.env.FE_DEV_URL, process.env.FE_PRO_URL];
 // const links = ["http://localhost:3000", "http://myapp.com"];
 const corsOpt = {
   origin: function (origin, next) {
-    console.log("origin:", origin);
-    console.log(port);
-
     if (!origin || links.indexOf(origin) !== -1) {
       next(null, true);
+      console.log("origin:", origin);
+      console.log(port);
     } else {
       next(new Error(`origin  ${origin} NOT found!`));
     }
