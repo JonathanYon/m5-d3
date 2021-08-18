@@ -11,12 +11,12 @@ const fonts = {
 };
 
 //   const PdfPrinter = require('pdfmake');
-export const getPDFStream = () => {
+export const getPDFStream = (data) => {
   const printer = new PdfPrinter(fonts);
   //   const fs = require('fs');
 
   const docDefinition = {
-    content: ["hello world"],
+    content: [`${data.category}`],
   };
   console.log(docDefinition);
   const options = {};

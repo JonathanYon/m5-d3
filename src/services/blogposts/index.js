@@ -182,12 +182,12 @@ blogPostsRouter.post(
   }
 );
 
-blogPostsRouter.get("/PDFDownload", async (req, res, next) => {
+blogPostsRouter.get("/:/id/PDFDownload", async (req, res, next) => {
   try {
-    // const posts = await getPosts();
-    // const post = posts.find((p) => p.id === req.params.postId);
+    const posts = await getPosts();
+    const post = posts.find((p) => p.id === req.params.postId);
     res.setHeader("Content-disposition", `attachment; filename=blogposts.pdf`);
-    const source = getPDFStream(); //{ cover: post.cover, contents: post.content }
+    const source = getPDFStream(post); //{ cover: post.cover, contents: post.content }
     const destination = res;
     pipeline(source, destination, (err) => {
       if (err) next(err);
