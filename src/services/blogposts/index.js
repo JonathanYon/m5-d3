@@ -10,6 +10,7 @@ import {
   getPostStream,
 } from "../lib/tool.js";
 import { getPDFStream, generatePDF } from "../lib/pdf.js";
+import { sendEmail } from "../lib/email.js";
 import uniqid from "uniqid";
 import createHttpError from "http-errors";
 import { validationResult } from "express-validator";
@@ -221,6 +222,16 @@ blogPostsRouter.get("/pdfAsync", async (req, res, next) => {
   } catch (error) {
     next(error);
     console.log(error);
+  }
+});
+
+blogPostsRouter.post("/sendEmail", async (req, res, next) => {
+  try {
+    const { email } = req.body;
+    await sendEmail(email);
+    res.send("Email sent!");
+  } catch (error) {
+    next(error);
   }
 });
 
