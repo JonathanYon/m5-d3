@@ -9,7 +9,7 @@ import {
   uploadFile,
   getPostStream,
 } from "../lib/tool.js";
-import { getPDFStream } from "../lib/pdf.js";
+import { getPDFStream, generatePDF } from "../lib/pdf.js";
 import uniqid from "uniqid";
 import createHttpError from "http-errors";
 import { validationResult } from "express-validator";
@@ -75,7 +75,7 @@ blogPostsRouter.post("/", postValidation, async (req, res, next) => {
       const newPost = { ...req.body, id: uniqid(), createdAt: new Date() };
       posts.push(newPost);
       await writePosts(posts);
-      res.status(201).send(posts);
+      res.status(201).send(newPost);
     }
   } catch (error) {
     next(error);
@@ -207,6 +207,20 @@ blogPostsRouter.get("/JSONDownload", async (req, res, next) => {
     });
   } catch (error) {
     next(error);
+  }
+});
+
+// blogPostsRouter.get("/:postId/pdfAsync", async (req, res, next) => {
+blogPostsRouter.get("/pdfAsync", async (req, res, next) => {
+  try {
+    // const posts = await getPosts();
+    // const post = posts.find((p) => p.id === req.params.postId);
+    // res.setHeader("Content-disposition", `attachment; filename=blogposts.pdf`);
+    const path = await generatePDF({ greeting: "this is a test" }); //{ cover: post.cover, contents: post.content }
+    res.send(path);
+  } catch (error) {
+    next(error);
+    console.log(error);
   }
 });
 

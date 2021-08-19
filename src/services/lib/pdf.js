@@ -1,4 +1,9 @@
 import PdfPrinter from "pdfmake";
+import { pipeline } from "stream";
+import { promisify } from "util";
+import fs from "fs-extra";
+import { fileURLToPath } from "url";
+import { dirname, join } from "path";
 
 // Define font files
 
@@ -22,7 +27,7 @@ export const getPDFStream = (data) => {
         // {
         //   image: `${data.avatar}`,
         // },
-        `is the the category`,
+        `${data.category} is the the category!`,
       ],
     };
     console.log("docDefinition", docDefinition);
@@ -32,6 +37,24 @@ export const getPDFStream = (data) => {
     //   pdfReadStream.pipe(fs.createWriteStream('document.pdf'));
     pdfReadStream.end();
     return pdfReadStream;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const generatePDF = async (data) => {
+  try {
+    const asyncPipeline = promisify(pipeline);
+    const printer = new PdfPrinter(fonts);
+    const docDefnition = {
+      content: [`hello world ${data.greeting}`],
+    };
+    const options = {};
+    const pdfReadStream = printer.createPdfKitDocument(docDefnition, options);
+    pdfReadStream.end();
+    const path = join(dirname(fileURLToPath(import.meta.url)), "test.pdf");
+    await asyncPipeline(pdfReadStream, fs.createWriteStream(path));
+    return path;
   } catch (error) {
     console.log(error);
   }

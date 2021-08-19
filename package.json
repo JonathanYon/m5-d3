@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/JonathanYon/m5-d3#readme",
   "dependencies": {
+    "@sendgrid/mail": "^7.4.6",
     "cloudinary": "^1.26.3",
     "cors": "^2.8.5",
     "express": "^4.17.1",
@@ -28,6 +29,7 @@
     "express-validator": "^6.12.1",
     "fs-extra": "^10.0.0",
     "http-errors": "^1.8.0",
+    "json2csv": "^5.0.6",
     "multer": "^1.4.3",
     "multer-storage-cloudinary": "^4.0.0",
     "pdfmake": "^0.2.2",
