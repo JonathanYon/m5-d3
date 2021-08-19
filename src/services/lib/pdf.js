@@ -54,7 +54,7 @@ export const generatePDF = async (data) => {
     pdfReadStream.end();
     const path = join(dirname(fileURLToPath(import.meta.url)), "test.pdf");
     await asyncPipeline(pdfReadStream, fs.createWriteStream(path));
-    return path;
+    // return path;
   } catch (error) {
     console.log(error);
   }

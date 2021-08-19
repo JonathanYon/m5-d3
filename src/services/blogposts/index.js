@@ -216,8 +216,8 @@ blogPostsRouter.get("/pdfAsync", async (req, res, next) => {
     // const posts = await getPosts();
     // const post = posts.find((p) => p.id === req.params.postId);
     // res.setHeader("Content-disposition", `attachment; filename=blogposts.pdf`);
-    const path = await generatePDF({ greeting: "this is a test" }); //{ cover: post.cover, contents: post.content }
-    res.send(path);
+    await generatePDF({ greeting: "this is a test" }); //{ cover: post.cover, contents: post.content }
+    res.send("Created!");
   } catch (error) {
     next(error);
     console.log(error);
