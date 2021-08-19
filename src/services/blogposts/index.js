@@ -16,6 +16,7 @@ import createHttpError from "http-errors";
 import { validationResult } from "express-validator";
 import { postValidation } from "./validation.js";
 import { pipeline } from "stream";
+import json2csv, { Transform } from "json2csv";
 
 const blogPostsRouter = express.Router();
 
@@ -198,9 +199,25 @@ blogPostsRouter.get("/:postId/PDFDownload", async (req, res, next) => {
   }
 });
 
+blogPostsRouter.get("/CSV", async (req, res, next) => {
+  try {
+    res.setHeader("Content-Disposition", "attachment; filename=test.csv");
+    const source = getPostStream();
+    const transform = new Transform({
+      fields: ["title", "category", "author"],
+    });
+    const destination = res;
+    pipeline(source, transform, destination, (err) => {
+      if (err) next(err);
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
 blogPostsRouter.get("/JSONDownload", async (req, res, next) => {
   try {
-    res.setHeader("Content-disposition", `attachment; filename=blogposts.json`);
+    res.setHeader("Content-Disposition", `attachment; filename=blogposts.json`);
     const source = getPostStream();
     const destination = res;
     pipeline(source, destination, (err) => {
@@ -212,7 +229,7 @@ blogPostsRouter.get("/JSONDownload", async (req, res, next) => {
 });
 
 // blogPostsRouter.get("/:postId/pdfAsync", async (req, res, next) => {
-blogPostsRouter.get("/pdfAsync", async (req, res, next) => {
+blogPostsRouter.get("/:postId/pdfAsync", async (req, res, next) => {
   try {
     // const posts = await getPosts();
     // const post = posts.find((p) => p.id === req.params.postId);
